@@ -1,0 +1,30 @@
+{% extends 'todo/base.html' %}
+
+{% block content %}
+<a href="{% url 'todo-create' %}" class="btn btn-primary">Add New Task</a>
+<hr>
+{% for todo in todos %}
+<div class="todo-item">
+    <h3 class="{% if todo.is_resolved %}resolved{% endif %}">
+        {{ todo.title }}
+    </h3>
+    {% if todo.description %}
+    <p>{{ todo.description }}</p>
+    {% endif %}
+    <p><small>Due: {{ todo.due_date|default:"No due date" }}</small></p>
+
+    <div class="actions">
+        <form action="{% url 'todo-resolve' todo.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn">
+                {% if todo.is_resolved %}Mark Unresolved{% else %}Mark Resolved{% endif %}
+            </button>
+        </form>
+        <a href="{% url 'todo-update' todo.pk %}" class="btn">Edit</a>
+        <a href="{% url 'todo-delete' todo.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+{% empty %}
+<p>No tasks yet!</p>
+{% endfor %}
+{% endblock %}
